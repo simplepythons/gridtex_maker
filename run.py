@@ -28,6 +28,8 @@ def makeGridTex():
     yn = int(math.floor(MAX_IMAGE_SIZE / rect_height))
 
     srcImageFiles = glob.glob(input_dir + "/*.png")
+    srcImageFiles.extend(glob.glob(input_dir + "/*.jpg"))
+    srcImageFiles.extend(glob.glob(input_dir + "/*.tga"))
 
     for y in range(yn):
         for x in range(xn):
@@ -36,7 +38,7 @@ def makeGridTex():
                 draw.rectangle((x * rect_width + rect_height * r, y * rect_height, (x + 1) * rect_width + rect_height * r, (y + 1) * rect_height), fill=BACK_COLOR, outline=(0, 0, 0))
                 if (fileIdx < len(srcImageFiles)):
                     srcImg = Image.open(srcImageFiles[fileIdx])
-                    cropSize = srcImg.width if srcImg.width < srcImg.height else srcImg.height
+                    cropSize = srcImg.width if srcImg.width <= srcImg.height else srcImg.height
                     srcCropped = srcImg.crop((0, 0, cropSize, cropSize))
                     srcCroppedResized = srcCropped.resize((rect_height, rect_height), Image.BICUBIC)
                     img.paste(srcCroppedResized, (x * rect_width + rect_height * r, y * rect_height))
@@ -45,8 +47,10 @@ def makeGridTex():
             draw.rectangle((x * rect_width + rect_height * 3, y * rect_height, (x + 1) * rect_width + rect_height, (y + 1) * rect_height), fill=BACK_COLOR, outline=(0, 0, 0))
             if (fileIdx < len(srcImageFiles)):
                 srcImg = Image.open(srcImageFiles[fileIdx])
-                cropSize = srcImg.width if srcImg.width < srcImg.height else srcImg.height
-                srcCropped = srcImg.crop((0, 0, int(cropSize * math.sqrt(2)), cropSize))
+                cropSize = srcImg.width if srcImg.width <= srcImg.height else srcImg.height
+                cropWidth = cropSize if srcImg.width <= srcImg.height else cropSize * math.sqrt(2)
+                cropHeight = cropSize / math.sqrt(2) if srcImg.width < srcImg.height else cropSize
+                srcCropped = srcImg.crop((0, 0, int(cropWidth), int(cropHeight)))
                 srcCroppedResized = srcCropped.resize((int(rect_height * math.sqrt(2)), rect_height), Image.BICUBIC)
                 img.paste(srcCroppedResized, (x * rect_width + rect_height * 3, y * rect_height))
             else:

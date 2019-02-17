@@ -1,4 +1,5 @@
 *.ttc
+[Dd]ata*
 
 # Byte-compiled  optimized  DLL files
 __pycache__
